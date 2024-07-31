@@ -123,12 +123,13 @@ router.post('/users/balance', async (req, res) => {
 
 //Endpoint to fund Users GPA
 router.post('/users/fundgpa', async (req, res) => {
-    const { user_token, amount } = req.body;
+    const { user_token, amount, program_token } = req.body;
     try {
         const response = await axios.post(`${MARQETA_API_URL}/gpaorders`, {
             user_token: user_token,
             amount: amount,
-            currency_code: "USD"
+            currency_code: "USD",
+            funding_source_token: program_token
         }, {
             auth: {
                 username: MARQETA_API_KEY,
@@ -141,5 +142,26 @@ router.post('/users/fundgpa', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+//Endpoints to login User
+router.post('/users/login', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const response = await axios.post(`${MARQETA_API_URL}/users/auth/login`, {
+            email: email,
+            password: password
+        }, {
+            auth: {
+                username: MARQETA_API_KEY,
+                password: MARQETA_API_SECRET
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error logging in:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 module.exports = router;

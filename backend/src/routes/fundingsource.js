@@ -70,6 +70,24 @@ router.post('/fundingsource/paymentcard', async (req, res) => {
     }
 });
 
-
+//Endpoint to create program source
+router.post('/fundingsource/program', async (req, res) => {
+    const { program_name } = req.body;
+    try {
+        const response = await axios.post(`${MARQETA_API_URL}/fundingsources/program`, {
+            name: program_name,
+            active: true
+        }, {
+            auth: {
+                username: MARQETA_API_KEY,
+                password: MARQETA_API_SECRET
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error creating program source:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 module.exports = router;
