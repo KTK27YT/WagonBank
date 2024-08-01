@@ -20,7 +20,6 @@
     animation: moveBackground 10s linear infinite;
     z-index: -1;
 }
-
 .dimBG {
     position: absolute;
     top: 0;
