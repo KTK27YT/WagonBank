@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { TypewriterEffectSmooth } from "./typewritter-effect";
 import styles from './Hero.module.css';
-
+import CreditCard from "./creditcard";
 const World = dynamic(() => import("../ui/globe").then((m) => m.World), {
   ssr: false,
 });
@@ -415,40 +415,39 @@ export function NewHero() {
   ];
 
   return (
-    <div className="flex flex-row items-center gap-20 justify-center py-20 h-screen md:h-auto dark:bg-black bg-white relative w-full">
-      
-      <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4">
-      <div className="flex flex-col items-center justify-center h-[10rem] flex flex-col text-center text-black dark:text-white max-w-md mt-2 mx-auto mb-20">
-          <h2>
-            Global Money, Global You
-          </h2>
-          <TypewriterEffectSmooth words={words} />
-          <button className="z-40  w-40 h-10 rounded-xl bg-white text-black border border-black text-ml">
-                            Signup
-          </button>
-          </div>
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 20,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 1,
-          }}
-          className="div"
-        >
-                
-        </motion.div>
-       <div className="absolute w-full space-y-4 bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-10 mt-50" />
-        <div className="absolute w-full space-y-4 -bottom-20 h-72 md:h-full z-1 mt-50">
+    <div className="flex items-center justify-center py-20 h-screen md:h-auto dark:bg-black bg-white relative w-full">
+    <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4 flex flex-col md:flex-row">
+      <motion.div
+        initial={{
+          opacity: 0,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          duration: 1,
+        }}
+        className="flex flex-col items-center justify-center text-center text-black dark:text-white md:w-1/2 w-full px-4"
+      >
+        <h2>Global Money, Global You</h2>
+        <TypewriterEffectSmooth words={words} />
+        <button className="w-40 h-10 rounded-xl bg-white text-black border border-black text-sm mt-8">
+          Signup
+        </button>
+      </motion.div>
+      <div className="relative md:w-1/2 w-full h-full flex items-center justify-center">
+        <div className="relative w-full h-full">
           <World data={sampleArcs} globeConfig={globeConfig} />
-        </div> 
-        
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white">
+            <CreditCard cardnumber="1234 5678 9012 3456" name="John Doe" expiry="22/29" start="20/10" />
+          </div>
+        </div>
       </div>
     </div>
+    <div className="absolute w-full space-y-4 bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-40" />
+  </div>
   );
 }
+
