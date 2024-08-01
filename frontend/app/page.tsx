@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { Hero } from "@/components/ui/Hero";
-import { NewHero } from "@/components/ui/NewHero";
+import { AllCardTypes } from "@/components/ui/all-card-types";
 export default function Home() {
   return (
-    <><NewHero /><p>Hello World</p></>
+    <><Hero />
+      <AllCardTypes />
+    </>
   );
 }
