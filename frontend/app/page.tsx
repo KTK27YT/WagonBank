@@ -1,16 +1,21 @@
-import Image from "next/image";
-import { Hero } from "@/components/ui/Hero";
-import { AllCardTypes } from "@/components/ui/all-card-types";
-import TestimonialCard from "@/components/ui/testomonial";
-import FeaturesSection from "@/components/ui/Features";
-
+import { Hero } from "@/components/sections/Hero";
+import { AllCardTypes } from "@/components/sections/all-card-types";
+import TestimonialCard from "@/components/sections/testomonial";
+import FeaturesSection from "@/components/sections/Features";
+import CTA from "@/components/sections/CTA";
+import Footnotes from "@/components/sections/Footnotes";
+import HomeNavBar from "@/components/sections/home-nav-bar";
 
 export default function Home() {
   return (
-    <><Hero />
+    <>
+      <HomeNavBar />
+      <Hero />
       <AllCardTypes />
       <TestimonialCard />
       <FeaturesSection />
+      <CTA />
+      <Footnotes />
     </>
   );
 }
