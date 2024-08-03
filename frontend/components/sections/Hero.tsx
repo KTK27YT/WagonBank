@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { TypewriterEffectSmooth } from "@/components/ui/typewritter-effect";
 import CreditCard from "@/components/ui/creditcard";
 import { globeConfig, sampleArcs } from "@/components/data/globe-config";
-
+import Link from "next/link";
 
 const NoSSR = dynamic(() => import('@/components/no-ssr'), { ssr: false });
 const World = dynamic(() => import("../ui/globe").then((m) => m.World), {
@@ -52,9 +52,11 @@ export function Hero() {
         >
           <h1>Global Money, Global You</h1>
           <TypewriterEffectSmooth words={words} />
-          <button className="w-40 h-10 rounded-xl bg-white text-black border border-black text-sm mt-8">
-            Signup
-          </button>
+          <Link href="/signup">
+            <button className="w-40 h-10 rounded-xl bg-white text-black border border-black text-sm mt-8">
+              Signup
+            </button>
+          </Link>
         </motion.div>
         <div className="relative md:w-1/2 w-full h-full flex items-center justify-center">
           <div className="relative w-full h-full">
