@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect } from "react";
 import { Label } from "./label";
 import { Input } from "./input";
 import { cn } from "@/lib/utils";
@@ -15,8 +16,67 @@ import {
 
 
 export default function SignupForm() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const searchParams = useSearchParams();
+  const cardDesignFromURL = searchParams.get('cardDesign');
+
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    gender: "",
+    cardDesign: cardDesignFromURL || "",
+  });
+
+  const handleChange = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSelectChange = (name: string) => (value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+
+
+
+  useEffect(() => {
+    const cardDesign = searchParams.get('cardDesign');
+    if (cardDesign) {
+      setFormData((prevData) => ({
+        ...prevData,
+        cardDesign,
+      }));
+    }
+  }, [searchParams]);
+
+  console.log(formData.cardDesign);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(formData);
+    // Code to send to server (TODO)
+    // try {
+    //   const response = await fetch('/api/signup', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(formData),
+    //   });
+    //   const result = await response.json();
+    //   console.log('Success:', result);
+    //   // Handle success (e.g., display a success message, redirect user, etc.)
+    // } catch (error) {
+    //   console.error('Error:', error);
+    //   // Handle error (e.g., display an error message)
+    // }
     console.log("Form submitted");
   };
   return (
@@ -36,28 +96,32 @@ export default function SignupForm() {
           start your bizzare financial journey with us
         </p>
 
-        <form className="my-8" onSubmit={handleSubmit}>
+        <form className="my-8 z-50" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-3 md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
             <LabelInputContainer>
               <Label htmlFor="firstname">First name</Label>
-              <Input id="firstname" placeholder="Jotaro" type="text" />
+              <Input id="firstname" placeholder="Jotaro" value={formData.firstname}
+                onChange={handleChange("firstname")} type="text" className="z-60" />
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="lastname">Last name</Label>
-              <Input id="lastname" placeholder="Kujo" type="text" />
+              <Input id="lastname" placeholder="Kujo" value={formData.lastname}
+                onChange={handleChange("lastname")} type="text" />
             </LabelInputContainer>
           </div>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="email">Email Address</Label>
-            <Input id="email" placeholder="jotarokujo@dolphin.com" type="email" />
+            <Input id="email" placeholder="jotarokujo@dolphin.com" value={formData.email}
+              onChange={handleChange("email")} type="email" />
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" placeholder="••••••••" type="password" />
+            <Input id="password" placeholder="••••••••" value={formData.password}
+              onChange={handleChange("password")} type="password" />
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="gender">Gender</Label>
-            <Select>
+            <Select onValueChange={handleSelectChange("gender")}>
               <SelectTrigger>
                 <SelectValue placeholder="Male" />
               </SelectTrigger>
@@ -69,7 +133,7 @@ export default function SignupForm() {
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="CardDesign">Card Design</Label>
-            <Select>
+            <Select value={formData.cardDesign} onValueChange={handleSelectChange("cardDesign")}>
               <SelectTrigger>
                 <SelectValue placeholder="Jotoro Kujo" />
               </SelectTrigger>

@@ -29,7 +29,7 @@ export function AllCardTypes() {
         <>
             <BigHeaderTitle title="One Card, Multiple Adventures" />
             <div className="py-20 flex flex-col lg:flex-row items-center justify-center bg-white dark:bg-black w-full gap-4 mx-auto px-8">
-                <Card title={<ButtonGo url="#" Text="Jotoro Kujo" />} icon={<JotoroIcon />}>
+                <Card title={<ButtonGo url="/signup?cardDesign=Jotoro Kujo" Text="Jotoro Kujo" />} icon={<JotoroIcon />}>
                     <CanvasRevealEffect
                         animationSpeed={5.1}
                         containerClassName="bg-purple-900"
@@ -39,7 +39,7 @@ export function AllCardTypes() {
                         ]}
                     />
                 </Card>
-                <Card title={<ButtonGo url="#" Text="Kira Yoshikage" />} icon={<KiraIcon />}>
+                <Card title={<ButtonGo url="/signup?cardDesign=Kira Yoshikage" Text="Kira Yoshikage" />} icon={<KiraIcon />}>
                     <CanvasRevealEffect
                         animationSpeed={3}
                         containerClassName="bg-pink-900"
@@ -51,7 +51,7 @@ export function AllCardTypes() {
                     />
                     <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/50 dark:bg-black/90" />
                 </Card>
-                <Card title={<ButtonGo url="#" Text="Bucciarati Bruno" />} icon={<BucciaratiIcon />}>
+                <Card title={<ButtonGo url="/signup?cardDesign=Bucciarati Bruno" Text="Bucciarati Bruno" />} icon={<BucciaratiIcon />}>
                     <CanvasRevealEffect
                         animationSpeed={3}
                         containerClassName="bg-sky-900"
