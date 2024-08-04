@@ -4,6 +4,19 @@ import React, { useState, useEffect } from "react";
 import { Label } from "./label";
 import { Input } from "./input";
 import { cn } from "@/lib/utils";
+import { MultiStepLoader as Loader } from '@/components/ui/multi-step-loader';
+import { IconSquareRoundedX } from '@tabler/icons-react';
+import axios from 'axios';
+import { BACKEND_URL } from '@/components/data/config';
+import AlertDialogComponent from '@/components/ui/alert-dialog-component';
+
+
+const loadingStates = [
+  { text: "Contacting Jotoro" },
+  { text: "Creating your stand" },
+  { text: "Creating your card" },
+  { text: "Logging in" },
+];
 
 import { motion } from "framer-motion";
 import {
@@ -14,6 +27,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+interface formDataProps {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  gender: string;
+  cardDesign: string;
+}
 
 export default function SignupForm() {
   const searchParams = useSearchParams();
@@ -43,8 +64,18 @@ export default function SignupForm() {
     }));
   };
 
+  const [loading, setLoading] = useState(false);
+  const [index_loader, setIndexLoader] = useState(0);
+  const [user_tokens, setUserToken] = useState<string | null>(null);
+  const [errortext, setErrorText] = useState<string | null>(null);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
 
+  useEffect(() => {
+    if (user_tokens !== null) {
+      console.log('Updated user_token:', user_tokens);
+    }
+  }, [user_tokens]);
 
   useEffect(() => {
     const cardDesign = searchParams.get('cardDesign');
@@ -56,29 +87,184 @@ export default function SignupForm() {
     }
   }, [searchParams]);
 
-  console.log(formData.cardDesign);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(formData);
-    // Code to send to server (TODO)
-    // try {
-    //   const response = await fetch('/api/signup', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(formData),
-    //   });
-    //   const result = await response.json();
-    //   console.log('Success:', result);
-    //   // Handle success (e.g., display a success message, redirect user, etc.)
-    // } catch (error) {
-    //   console.error('Error:', error);
-    //   // Handle error (e.g., display an error message)
-    // }
-    console.log("Form submitted");
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    event.preventDefault();
+    setLoading(true);
+    setErrorText(null);
+    setUserToken(null);
+
+    try {
+
+      // Step 1: Ping the server
+      setIndexLoader(0);
+      console.log("pinging server");
+      try {
+        await pingServer();
+      } catch (error) {
+        console.error('Error during multi-step process:', error);
+        setIsAlertOpen(true);
+        setLoading(false);
+        return;
+      }
+
+      // Step 2: Create user account
+      setIndexLoader(1);
+      console.log("creating user account");
+      try {
+        const response_data = await createUserAccount(formData);
+        console.log(response_data.token);
+        setUserToken(response_data.token);
+      } catch (error) {
+        console.error('Error during multi-step process:', error);
+        setIsAlertOpen(true);
+        setLoading(false);
+        return;
+      }
+
+
+
+
+    } catch (error) {
+      console.error('Error during multi-step process:', error);
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (user_tokens) {
+      // Step 3: Create card
+      setIndexLoader(2);
+      console.log("creating card");
+      console.log(user_tokens);
+      createCard(user_tokens)
+        .then(() => {
+          // Step 4: Log in and redirect to dashboard
+          setIndexLoader(3);
+          console.log("logging in");
+          return loginUser();
+        })
+        .then(() => {
+          setIndexLoader(4);
+          console.log("redirecting");
+          // window.location.href = '/dashboard';
+        })
+        .catch((error) => {
+          console.error('Error during multi-step process:', error);
+          setIsAlertOpen(true);
+          setLoading(false);
+        });
+    }
+  }, [user_tokens]);
+
+  const pingServer = async () => {
+    axios.get(`${BACKEND_URL}/ping`)
+      .then((response) => {
+        console.log("we pinging")
+        return Promise.resolve(response.data.message);
+      })
+      .catch(function (error) {
+        setErrorText('Failed to contact the server. Please try again later. More Details: ' + error);
+        console.log(error);
+        throw error;
+      });
+  };
+
+
+  const createUserAccount = async (formData: formDataProps) => {
+    const usercreatedata = {
+      first_name: formData.firstname,
+      last_name: formData.lastname,
+      email: formData.email,
+      password: formData.password,
+      gender: formData.gender
+    }
+    try {
+      const response = await axios.post(`${BACKEND_URL}/users/createuser`, usercreatedata, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response.data.token);
+
+      console.log(response.data);
+
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // 5 second delay Its so stupid how long react hooks take to update
+      return response.data;
+    } catch (error) {
+      const errorMessage = (error as any).response.data.error_message;
+      const errorCode = (error as any).response.data.error_code;
+      setErrorText(errorMessage + " " + errorCode + " " + error);
+      throw error;
+    }
+  };
+
+  const createCard = async (usertoken: string) => {
+    //Mapping the card design to the card design Images
+    const cardDesignImages: { [key: string]: string } = {
+      "Jotoro Kujo": "/jotoro-pattern.png",
+      "Kira Yoshikage": "/kira-pattern.png",
+      "Bucciarati Bruno": "/bucciarati-pattern.png"
+    };
+    const cardDesign = formData.cardDesign;
+    const cardDesignImage = cardDesignImages[cardDesign];
+
+    const createcarddata = {
+      user_token: usertoken,
+      thermalColor: cardDesign,
+      imageName: cardDesignImage,
+    }
+    try {
+      const response = await axios.post(`${BACKEND_URL}/cards/createcard`, createcarddata, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const errorMessage = (error as any).response.data.error_message;
+      const errorCode = (error as any).response.data.error_code;
+      setErrorText(errorMessage + " " + errorCode + " " + error);
+      throw error;
+    }
+  };
+
+  const loginUser = async () => {
+    const loginuserdata = {
+      email: formData.email,
+      password: formData.password,
+    }
+    try {
+      const response = await axios.post(`${BACKEND_URL}/users/login`, loginuserdata, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response.data);
+      console.log(response.data.token);
+      setUserToken(response.data.token);
+      return response.data;
+    } catch (error) {
+      const errorMessage = (error as any).response.data.error_message;
+      const errorCode = (error as any).response.data.error_code;
+      setErrorText(errorMessage + " " + errorCode + " " + error);
+      throw error;
+    }
+
+  };
+
+  const handleErrorAction = () => {
+    // Define what happens when the user confirms the error
+    console.log("User confirmed the error");
+    setIsAlertOpen(false); // Close the alert dialog
+  };
+
+  const handleErrorCancel = () => {
+    // Define what happens when the user cancels the error dialog
+    console.log("User canceled the error dialog");
+    setIsAlertOpen(false); // Close the alert dialog
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -86,7 +272,15 @@ export default function SignupForm() {
       transition={{ type: "tween", duration: 0.5, delay: 2.5, ease: "easeInOut" }}
 
     >
-
+      <AlertDialogComponent
+        isOpen={isAlertOpen}
+        onclose={() => setIsAlertOpen(false)}
+        onCancel={() => setIsAlertOpen(false)}
+        title="An Error Occurred"
+        description={errortext || ""}
+        cancelText="Dismiss"
+        onAction={handleErrorAction}
+      />
       <div className="z-50 my-auto max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input ">
 
         <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
@@ -121,13 +315,13 @@ export default function SignupForm() {
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="gender">Gender</Label>
-            <Select onValueChange={handleSelectChange("gender")}>
+            <Select value={formData.gender} onValueChange={handleSelectChange("gender")}>
               <SelectTrigger>
-                <SelectValue placeholder="Male" />
+                <SelectValue placeholder="" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Male">Male</SelectItem>
-                <SelectItem value="Female">Female</SelectItem>
+                <SelectItem value="M">Male</SelectItem>
+                <SelectItem value="F">Female</SelectItem>
               </SelectContent>
             </Select>
           </LabelInputContainer>
@@ -135,7 +329,7 @@ export default function SignupForm() {
             <Label htmlFor="CardDesign">Card Design</Label>
             <Select value={formData.cardDesign} onValueChange={handleSelectChange("cardDesign")}>
               <SelectTrigger>
-                <SelectValue placeholder="Jotoro Kujo" />
+                <SelectValue placeholder="" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Jotoro Kujo">Jotoro Kujo</SelectItem>
@@ -156,6 +350,9 @@ export default function SignupForm() {
 
 
         </form>
+        <Loader loadingStates={loadingStates} loading={loading} duration={1000000} index_loader={index_loader} />
+
+
       </div>
     </motion.div>
   );

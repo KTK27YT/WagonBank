@@ -28,7 +28,7 @@ router.post('/fundingsource/ach', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error creating ACH source:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 //Endpoint to get Funding Sources Addresss
@@ -44,7 +44,7 @@ router.post('/fundingsource/address', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error fetching Funding Sources Address:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 //Endpoint to create payment card source
@@ -66,7 +66,7 @@ router.post('/fundingsource/paymentcard', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error creating payment card source:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 
@@ -86,7 +86,7 @@ router.post('/fundingsource/program', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error creating program source:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 

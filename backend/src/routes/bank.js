@@ -24,7 +24,7 @@ router.post('/bank/simulatetransaction', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error simulating transaction:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 
@@ -53,7 +53,7 @@ router.post('/bank/createbankaccount', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error creating bank account:', error);
-        res.status(500).send('Internal Server Error' + error);
+        res.status(500).json(error.response.data);
     }
 });
 

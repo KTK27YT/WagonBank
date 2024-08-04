@@ -18,10 +18,10 @@ router.get('/users', async (req, res) => {
                 password: MARQETA_API_SECRET
             }
         });
-        res.json(response.data);
+        res.status(200).json(response.data);
     } catch (error) {
         console.error('Error fetching cardholders:', error);
-        res.status(500).send('Internal Server Error' + MARQETA_API_URL);
+        res.status(500).json(error.response.data);
     }
 });
 
@@ -63,10 +63,10 @@ router.post('/users/createuser', async (req, res) => {
                 password: MARQETA_API_SECRET
             }
         });
-        res.json(response.data);
+        res.status(200).json(response.data);
     } catch (error) {
         console.error('Error creating cardholder:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 
@@ -83,7 +83,7 @@ router.post('/users/cards', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error fetching cards:', error);
-        res.status(500).send('Internal Server Error' + user_token);
+        res.status(500).json(error.response.data);
     }
 });
 
@@ -100,7 +100,7 @@ router.post('/users', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error fetching users:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 
@@ -117,7 +117,7 @@ router.post('/users/balance', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error fetching users:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 
@@ -139,7 +139,7 @@ router.post('/users/fundgpa', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error funding GPA:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 
@@ -159,7 +159,7 @@ router.post('/users/login', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error logging in:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json(error.response.data);
     }
 });
 
