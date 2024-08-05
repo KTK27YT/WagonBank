@@ -10,6 +10,7 @@ import axios from 'axios';
 import { BACKEND_URL } from '@/components/data/config';
 import AlertDialogComponent from '@/components/ui/alert-dialog-component';
 
+// TODO create the login flow
 
 const loadingStates = [
   { text: "Contacting Jotoro" },
@@ -241,8 +242,8 @@ export default function SignupForm() {
         },
       });
       console.log(response.data);
-      console.log(response.data.token);
-      setUserToken(response.data.token);
+      console.log(response.data.user.token);
+      setUserToken(response.data.user.token);
       return response.data;
     } catch (error) {
       const errorMessage = (error as any).response.data.error_message;
