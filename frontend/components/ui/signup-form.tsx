@@ -9,6 +9,8 @@ import { IconSquareRoundedX } from '@tabler/icons-react';
 import axios from 'axios';
 import { BACKEND_URL } from '@/components/data/config';
 import AlertDialogComponent from '@/components/ui/alert-dialog-component';
+import { setUserTokenSession } from '@/components/Auth/auth';
+
 
 // TODO create the login flow
 
@@ -148,7 +150,8 @@ export default function SignupForm() {
         .then(() => {
           setIndexLoader(4);
           console.log("redirecting");
-          // window.location.href = '/dashboard';
+          setUserTokenSession(user_tokens);
+          window.location.href = '/dashboard';
         })
         .catch((error) => {
           console.error('Error during multi-step process:', error);
