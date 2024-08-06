@@ -4,12 +4,12 @@ import TestimonialCard from "@/components/sections/testomonial";
 import FeaturesSection from "@/components/sections/Features";
 import CTA from "@/components/sections/CTA";
 import Footnotes from "@/components/sections/Footnotes";
-import HomeNavBar from "@/components/sections/home-nav-bar";
+import NavBar from "@/components/sections/nav-bar";
 
 export default function Home() {
   return (
     <>
-      <HomeNavBar />
+      <NavBar hasLoginBtn={true} />
       <Hero />
       <AllCardTypes />
       <TestimonialCard />
