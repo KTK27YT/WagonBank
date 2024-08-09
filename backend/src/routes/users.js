@@ -74,6 +74,13 @@ router.post('/users/createuser', async (req, res) => {
 router.post('/users/cards', async (req, res) => {
     const { user_token, show_cvv } = req.body;
     try {
+        const name_response = await axios.get(`${MARQETA_API_URL}/users/${user_token}`, {
+            auth: {
+                username: MARQETA_API_KEY,
+                password: MARQETA_API_SECRET
+            }
+        });
+
         const inital_response = await axios.get(`${MARQETA_API_URL}/cards/user/${user_token}`, {
             auth: {
                 username: MARQETA_API_KEY,
@@ -91,8 +98,9 @@ router.post('/users/cards', async (req, res) => {
         });
         const data = response.data;
         const transformed_data = {
+            Name: name_response.data.first_name + " " + name_response.data.last_name,
             PAN: data.pan,
-            expiry: data.expiration.slice(0,2) + "/" + data.expiration.slice(2),
+            expiry: data.expiration.slice(0, 2) + "/" + data.expiration.slice(2),
             cvv: show_cvv ? data.cvv_number : "***",
             image: data.fulfillment.card_personalization.images.card.name,
             character: data.fulfillment.card_personalization.images.card.thermal_color
@@ -103,7 +111,7 @@ router.post('/users/cards', async (req, res) => {
         console.log(transformed_data);
         res.status(200).json(transformed_data);
 
-       // res.json(response.data);
+        // res.json(response.data);
     } catch (error) {
         console.error('Error fetching cards:', error);
         res.status(500).json(error.response.data);
@@ -186,7 +194,31 @@ router.post('/users/login', async (req, res) => {
         console.error('Error logging in:', error);
         console.log(MARQETA_API_URL);
         res.status(500).json(error.response.date);
-     
+
+    }
+});
+
+router.post('/users/transactions', async (req, res) => {
+    const { user_token } = req.body;
+    try {
+        const response = await axios.get(`${MARQETA_API_URL}/transactions?user_token=${user_token}`, {
+            auth: {
+                username: MARQETA_API_KEY,
+                password: MARQETA_API_SECRET
+            }
+        });
+
+        const transactions = response.data.data.map(transaction => ({
+            id: transaction.token,
+            amount: transaction.amount,
+            date: transaction.created_time,
+            description: transaction.memo
+        }));
+
+        res.status(200).json(transactions);
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).json({ error: 'Failed to fetch transactions' });
     }
 });
 

@@ -1,47 +1,111 @@
 .chip img {
-    width: 50px;
-  }
-  .logo img {
-    width: 70px;
-  }
-  .card {
-    position: relative;
-    background: rgba(255, 255, 255, 0.057);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    width: 450px;
-    height: 270px;
-    border-radius: 24px;
-    box-shadow: 0 0 80px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    overflow: hidden;
-  }
-  .cardcontent {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    padding: 2rem;
-  }
-  .row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
-  .number {
-    font-weight: bolder;
-    font-size: 1.25rem;
-  }
-  .from,
-  .to,
-  .number,
-  .name,
-  .status {
-    letter-spacing: 2px;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-    color: rgba(255, 255, 255, 0.8);
-    text-transform: uppercase;
-  }
-  
-  .image {
-    opacity: 0.8;
-  }
+  width: 50px;
+}
+
+.logo img {
+  width: 70px;
+}
+
+.card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.057);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  width: 450px;
+  height: 270px;
+  border-radius: 24px;
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.cardcontent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 2rem;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.number {
+  font-weight: bolder;
+  font-size: 1.25rem;
+}
+
+.from,
+.to,
+.number,
+.name,
+.status {
+  letter-spacing: 2px;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+}
+
+.image {
+  opacity: 0.8;
+}
+
+.cardnoblur {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+  position: relative;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  width: 450px;
+  height: 270px;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+
+
+}
+
+.cardcontentdarken {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 2rem;
+}
+
+.button {
+  /* mt-4 */
+  padding-left: 1rem;
+  /* px-4 */
+  padding-right: 1rem;
+  /* padding-top: 0.5rem;
+  */
+  /* py-2 */
+  /* padding-bottom: 0.5rem; */
+  background-color: black;
+  /* bg-blue-600 */
+  color: white;
+  /* text-white */
+  border-radius: 9999px;
+  /* rounded-full */
+  display: flex;
+  /* flex */
+  align-items: center;
+  /* items-center */
+  justify-content: center;
+  /* justify-center */
+  gap: 0.5rem;
+  /* space-x-2 */
+  /* w-full */
+}
+
+.button:hover {
+  background-color: white;
+  color: black;
+  transition: 0.3s;
+  /* hover:bg-blue-700 */
+}

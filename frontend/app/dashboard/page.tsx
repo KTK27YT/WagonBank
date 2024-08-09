@@ -9,6 +9,8 @@ import { BalanceData } from '@/components/ui/balance';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CreditCardUI } from '@/components/ui/credit-card';
 import type { CardDetailsProps } from '@/components/ui/credit-card';
+import TransactionTable from '@/components/ui/transactions';
+import type { Transaction } from '@/components/ui/transactions';
 // import  { CardProps as _CardProps } from '@/components/ui/creditcard';
 
 //TYPESCRIPT IS BEING A BITCH ABOUT CARDDETAILS
@@ -19,7 +21,7 @@ const Dashboard = () => {
     const [balances, setBalances] = useState<{ [key: string]: BalanceData }>({});
     const [isLoading, setIsLoading] = useState(true);
     const [cardDetails, setCardDetails] = useState<CardDetailsProps['cardDetailsData'] | null>(null);
-
+    const [name, setName] = useState<string | undefined>(undefined);
     // Fetch the user token on component mount
     useEffect(() => {
         const fetchData = async () => {
@@ -35,6 +37,7 @@ const Dashboard = () => {
     // Fetch balance data when userToken is available
     useEffect(() => {
         if (!userToken) return;
+
 
         const fetchBalance = async () => {
             console.log("Fetching balance data");
@@ -61,7 +64,7 @@ const Dashboard = () => {
             console.log("Fetching card details");
             try {
                 console.log(userToken);
-                const cardData = await getCardDetails(userToken);
+                const cardData = await getCardDetails(userToken, true);
                 if (cardData.error) {
                     console.error('Error fetching card details:', cardData.error);
                     setErrorText(cardData.error);
@@ -79,8 +82,13 @@ const Dashboard = () => {
         };
 
 
+
+
+
         fetchBalance();
         fetchCardDetails();
+
+
     }, [userToken]);
 
     const handleErrorAction = () => {
@@ -109,8 +117,12 @@ const Dashboard = () => {
             {isLoading ? (
                 <Skeleton className="w-64 mr-2 h-[10rem] rounded-lg" />
             ) : (
-                <CreditCardUI cardDetailsData={cardDetails} />
+                <div className="min-w-screen bg-black flex text-white justify-center align-center items-center p-8">
+                    <CreditCardUI cardDetailsData={cardDetails} />
+
+                </div>
             )}
+
         </div>
     );
 };

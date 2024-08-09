@@ -66,7 +66,7 @@ export function AllCardTypes() {
     );
 }
 
-const Card = ({
+export const Card = ({
     title,
     icon,
     children,

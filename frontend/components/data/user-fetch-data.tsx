@@ -23,9 +23,10 @@ export const getBalance = async (userToken: string) => {
     }
 };
 
-export const getCardDetails = async (userToken: string) => {
+export const getCardDetails = async (userToken: string, show_cvv: boolean) => {
     const userData = {
         user_token: userToken,
+        show_cvv: show_cvv,
     };
 
     console.log(userData);
@@ -37,6 +38,20 @@ export const getCardDetails = async (userToken: string) => {
         });
         return response.data;
     } catch (error) {
+        const errorMessage = (error as any).response.data.error_message;
+        const errorCode = (error as any).response.data.error_code;
+        return { error: errorMessage, code: errorCode };
+    }
+};
+
+export const getTransactions = async (userToken: string) => {
+    try {
+        const response = await axios.post('http://localhost:5000/users/transactions', {
+            user_token: userToken,
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
         const errorMessage = (error as any).response.data.error_message;
         const errorCode = (error as any).response.data.error_code;
         return { error: errorMessage, code: errorCode };
