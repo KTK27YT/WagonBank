@@ -46,8 +46,14 @@ export const getCardDetails = async (userToken: string, show_cvv: boolean) => {
 
 export const getTransactions = async (userToken: string) => {
     try {
-        const response = await axios.post('http://localhost:5000/users/transactions', {
-            user_token: userToken,
+        console.log("Running");
+        const userData = {
+            user_token: userToken
+        };
+        const response = await axios.post(`${BACKEND_URL}/users/transactions`, userData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         return response.data;
     } catch (error) {

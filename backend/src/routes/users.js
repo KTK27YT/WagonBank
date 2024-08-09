@@ -174,6 +174,8 @@ router.post('/users/fundgpa', async (req, res) => {
     }
 });
 
+
+
 //Endpoints to login User
 router.post('/users/login', async (req, res) => {
     const { email, password } = req.body;
@@ -198,8 +200,11 @@ router.post('/users/login', async (req, res) => {
     }
 });
 
+// Endpoint to get transactions
 router.post('/users/transactions', async (req, res) => {
-    const { user_token } = req.body;
+    console.log("Fetching transactions");
+
+    const { user_token } = req.query;
     try {
         const response = await axios.get(`${MARQETA_API_URL}/transactions?user_token=${user_token}`, {
             auth: {
@@ -207,20 +212,13 @@ router.post('/users/transactions', async (req, res) => {
                 password: MARQETA_API_SECRET
             }
         });
-
-        const transactions = response.data.data.map(transaction => ({
-            id: transaction.token,
-            amount: transaction.amount,
-            date: transaction.created_time,
-            description: transaction.memo
-        }));
-
-        res.status(200).json(transactions);
+        console.log(response.data.data);
+        console.log(user_token)
+        res.status(200).json(response.data.data);
     } catch (error) {
         console.error('Error fetching transactions:', error);
-        res.status(500).json({ error: 'Failed to fetch transactions' });
+        res.status(500).json(error.response.data);
     }
 });
-
 
 module.exports = router;

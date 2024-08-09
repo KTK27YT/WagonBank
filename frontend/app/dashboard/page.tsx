@@ -4,12 +4,12 @@ import { getUserTokenSession } from '@/components/Auth/auth';
 import NavBar from '@/components/sections/nav-bar';
 import AlertDialogComponent from '@/components/ui/alert-dialog-component';
 import Balance from '@/components/ui/balance';
-import { getBalance, getCardDetails } from '@/components/data/user-fetch-data';
+import { getBalance, getCardDetails, getTransactions } from '@/components/data/user-fetch-data';
 import { BalanceData } from '@/components/ui/balance';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CreditCardUI } from '@/components/ui/credit-card';
 import type { CardDetailsProps } from '@/components/ui/credit-card';
-import TransactionTable from '@/components/ui/transactions';
+import { TransactionTableUI } from '@/components/ui/transactions';
 import type { Transaction } from '@/components/ui/transactions';
 // import  { CardProps as _CardProps } from '@/components/ui/creditcard';
 
@@ -22,6 +22,7 @@ const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [cardDetails, setCardDetails] = useState<CardDetailsProps['cardDetailsData'] | null>(null);
     const [name, setName] = useState<string | undefined>(undefined);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
     // Fetch the user token on component mount
     useEffect(() => {
         const fetchData = async () => {
@@ -38,63 +39,42 @@ const Dashboard = () => {
     useEffect(() => {
         if (!userToken) return;
 
-
-        const fetchBalance = async () => {
-            console.log("Fetching balance data");
+        const fetchData = async () => {
             try {
-                console.log(userToken);
+                console.log('Fetching balance data');
                 const balanceData = await getBalance(userToken);
                 if (balanceData.error) {
-                    console.error('Error fetching balance:', balanceData.error);
-                    setErrorText(balanceData.error);
-                    setIsAlertOpen(true);
-                    return;
+                    throw new Error(balanceData.error);
                 }
                 setBalances(balanceData.gpa.balances);
-            } catch (error: unknown) {
-                setErrorText((error as Error).message);
-                setIsAlertOpen(true);
-                setIsLoading(false);
-                console.error('Error fetching balance:', error);
 
-            }
-        };
-
-        const fetchCardDetails = async () => {
-            console.log("Fetching card details");
-            try {
-                console.log(userToken);
+                console.log('Fetching card details');
                 const cardData = await getCardDetails(userToken, true);
                 if (cardData.error) {
-                    console.error('Error fetching card details:', cardData.error);
-                    setErrorText(cardData.error);
-                    setIsAlertOpen(true);
-                    return;
+                    throw new Error(cardData.error);
                 }
                 setCardDetails(cardData);
+
+                console.log('Fetching transactions');
+                const response = await getTransactions(userToken);
+                console.log(response);
+                setTransactions(response);
+
                 setIsLoading(false);
-            } catch (error: unknown) {
-                setErrorText((error as Error).message);
+            } catch (error) {
+                setErrorText((error as any).message || 'An error occurred');
                 setIsAlertOpen(true);
                 setIsLoading(false);
-                console.error('Error fetching card details:', error);
+                console.error('Error fetching data:', error);
             }
         };
 
-
-
-
-
-        fetchBalance();
-        fetchCardDetails();
-
-
+        fetchData();
     }, [userToken]);
 
+
     const handleErrorAction = () => {
-        // Define what happens when the user confirms the error
-        console.log("User confirmed the error");
-        setIsAlertOpen(false); // Close the alert dialog
+        setIsAlertOpen(false);
     };
 
     return (
@@ -110,15 +90,50 @@ const Dashboard = () => {
             />
             <NavBar hasLoginBtn={false} />
             {isLoading ? (
-                <Skeleton className="w-64 mr-2 h-[10rem] rounded-lg" />
+                <div className="min-w-screen bg-black text-white p-8">
+                    <h1 className="text-3xl align-center text-center font-bold mb-6">Account</h1>
+                    <div className="flex flex align-center justify-center items-center flex-wrap gap-4">
+                        <Skeleton className="bg-gray-900 text-white p-4 rounded-lg shadow-md w-64 h-60" />
+                    </div>
+                </div>
             ) : (
                 <Balance balances={balances} />
             )}
             {isLoading ? (
-                <Skeleton className="w-64 mr-2 h-[10rem] rounded-lg" />
+                <div className="min-w-screen flex-col gap-10 bg-black  flex text-white flex justify-center align-center items-center p-8">
+                    <Skeleton style={{
+                        border: '2px solid rgba(255, 255, 255, 0.1)',
+                        width: '450px',
+                        height: '270px',
+                        overflow: 'hidden',
+                        background: 'gray-900'
+
+                    }} />
+                </div>
+            ) : (
+                <div className="min-w-screen flex-col gap-10 bg-black flex text-white flex justify-center align-center items-center p-8">
+                    <div className=''>
+                        <CreditCardUI cardDetailsData={cardDetails} />
+                    </div>
+                    <div className=''>
+                        <button className="px-8 py-2 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 text-white focus:ring-2 focus:ring-blue-400 hover:shadow-xl transition duration-200">
+                            Simulate Transaction
+                        </button>
+
+                    </div>
+                </div>
+            )}
+            {isLoading ? (
+                <div className="min-w-screen bg-black flex text-white justify-center align-center items-center p-8">
+                    <Skeleton className="bg-gray-900 w-screen h-64" />
+                </div>
             ) : (
                 <div className="min-w-screen bg-black flex text-white justify-center align-center items-center p-8">
-                    <CreditCardUI cardDetailsData={cardDetails} />
+                    <TransactionTableUI
+                        transactions={transactions}
+                        isLoading={isLoading}
+                        errorText={errorText}
+                    />
 
                 </div>
             )}

@@ -22,7 +22,7 @@ const Balance: React.FC<BalanceProps> = ({ balances }) => {
                 {Object.keys(balances).map((currency) => (
                     <div
                         key={currency}
-                        className="bg-gray-800 text-white p-4 rounded-lg shadow-md w-64"
+                        className="bg-gray-900 text-white p-4 rounded-lg shadow-md w-64"
                     >
                         <div className="flex items-center mb-4">
                             <span className="text-2xl mr-2">
@@ -35,12 +35,13 @@ const Balance: React.FC<BalanceProps> = ({ balances }) => {
                         </div>
                         <p className="text-xl font-bold mb-2">${balances[currency].ledger_balance.toFixed(2)}</p>
                         <p className="text-sm text-gray-400">{currency === 'USD' ? 'US Dollar' : currency}</p>
-                        <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 flex items-center justify-center space-x-2 w-full">
+                        <button className="mt-4 px-4 py-2 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 text-white focus:ring-2 focus:ring-blue-400 hover:shadow-xl transition duration-200 flex items-center justify-center space-x-2 w-full">
                             <IconWallet size={20} />
                             <span>Top-Up Wallet</span>
                         </button>
                     </div>
                 ))}
+
             </div>
         </div>
     );

@@ -1,41 +1,94 @@
 import React from 'react';
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+
+} from "@/components/ui/table"
+import { IconFileInvoice } from '@tabler/icons-react';
+
 export type Transaction = {
     id: string;
     amount: number;
-    date: string;
-    description: string;
+    currency: string;
+    status: string;
+    created_time: string;
+    identifier: string;
+    type: string;
+    state: string;
+    card: {
+        last_four: string;
+    };
+    approval_code: string;
+    network: string;
+    currency_code: string;
 };
 
-interface TransactionTableProps {
+interface TransactionTableUIProps {
     transactions: Transaction[];
+    isLoading: boolean;
+    errorText: string | null;
 }
 
-function TransactionTable({ Transactions }: React.FC<TransactionTableProps>) {
+export const TransactionTableUI: React.FC<TransactionTableUIProps> = ({
+    transactions,
+    isLoading,
+    errorText,
+}) => {
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (errorText) {
+        return <div>Error: {errorText}</div>;
+    }
     return (
+
         <div>
-            <h2>Transactions</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Transactions.map((Transactions: { id: boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | Promise<React.AwaitedReactNode> | React.Key | null | undefined; amount: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; date: string | number | Date; description: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; }) => (
-                        <tr key={Transactions.id}>
-                            <td>{Transactions.id}</td>
-                            <td>{Transactions.amount}</td>
-                            <td>{new Date(Transactions.date).toLocaleDateString()}</td>
-                            <td>{Transactions.description}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {transactions && transactions.length > 0 ? (
+                <Table>
+                    <TableCaption>A list of your recent transactions.</TableCaption>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>ID</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Currency</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Card Last Four</TableHead>
+                            <TableHead>Approval Code</TableHead>
+                            <TableHead>Network</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {transactions.map((transaction) => (
+                            <TableRow key={transaction.identifier}>
+                                <TableCell>{transaction.identifier}</TableCell>
+                                <TableCell>{transaction.type}</TableCell>
+                                <TableCell>{transaction.state}</TableCell>
+                                <TableCell>{transaction.amount}</TableCell>
+                                <TableCell>{transaction.currency_code}</TableCell>
+                                <TableCell>{transaction.created_time}</TableCell>
+                                <TableCell>{transaction.card?.last_four || 'N/A'}</TableCell>
+                                <TableCell>{transaction.approval_code || 'N/A'}</TableCell>
+                                <TableCell>{transaction.network || 'N/A'}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            ) : (
+                <div className="flex flex-col items-center justify-center bg-gray-900 w-screen h-64">
+                    <IconFileInvoice className="h-16 w-16 text-gray-400 mb-4" />
+                    <span className="text-white text-xl align-center text-center "> Za Warudo is empty<br></br> Go make some transactions</span>
+                </div>
+            )}
         </div>
     );
-}
+};
 
-export default TransactionTable;
+export default TransactionTableUI;
