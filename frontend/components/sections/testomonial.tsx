@@ -5,7 +5,6 @@ import Icon from '@/components/ui/Icon-border';
 import {
   IconArrowNarrowLeft,
   IconArrowNarrowRight,
-  IconX,
 } from "@tabler/icons-react";
 
 const testimonials = [

@@ -66,21 +66,44 @@ router.post('/users/createuser', async (req, res) => {
         res.status(200).json(response.data);
     } catch (error) {
         console.error('Error creating cardholder:', error);
-        res.status(500).json(error.response.data);
+        res.status(500).json(error);
     }
 });
 
 // Endpoint to get users cards
 router.post('/users/cards', async (req, res) => {
-    const { user_token } = req.body;
+    const { user_token, show_cvv } = req.body;
     try {
-        const response = await axios.get(`${MARQETA_API_URL}/cards/user/${user_token}`, {
+        const inital_response = await axios.get(`${MARQETA_API_URL}/cards/user/${user_token}`, {
             auth: {
                 username: MARQETA_API_KEY,
                 password: MARQETA_API_SECRET
             }
         });
-        res.json(response.data);
+        console.log(inital_response.data);
+        const card_token = inital_response.data.data[0].token;
+        console.log("Fetching card number/details");
+        const response = await axios.get(`${MARQETA_API_URL}/cards/${card_token}/showpan?show_cvv_number=${show_cvv}`, {
+            auth: {
+                username: MARQETA_API_KEY,
+                password: MARQETA_API_SECRET
+            }
+        });
+        const data = response.data;
+        const transformed_data = {
+            PAN: data.pan,
+            expiry: data.expiration.slice(0,2) + "/" + data.expiration.slice(2),
+            cvv: show_cvv ? data.cvv_number : "***",
+            image: data.fulfillment.card_personalization.images.card.name,
+            character: data.fulfillment.card_personalization.images.card.thermal_color
+        }
+
+
+
+        console.log(transformed_data);
+        res.status(200).json(transformed_data);
+
+       // res.json(response.data);
     } catch (error) {
         console.error('Error fetching cards:', error);
         res.status(500).json(error.response.data);
@@ -156,10 +179,14 @@ router.post('/users/login', async (req, res) => {
                 password: MARQETA_API_SECRET
             }
         });
+        console.log(MARQETA_API_URL);
         res.json(response.data);
+
     } catch (error) {
         console.error('Error logging in:', error);
-        res.status(500).json(error.response.data);
+        console.log(MARQETA_API_URL);
+        res.status(500).json(error.response.date);
+     
     }
 });
 

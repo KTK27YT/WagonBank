@@ -7,7 +7,8 @@ import Balance from '@/components/ui/balance';
 import { getBalance, getCardDetails } from '@/components/data/user-fetch-data';
 import { BalanceData } from '@/components/ui/balance';
 import { Skeleton } from '@/components/ui/skeleton';
-import CreditCard from '@/components/ui/creditcard';
+import { CreditCardUI } from '@/components/ui/credit-card';
+import type { CardDetailsProps } from '@/components/ui/credit-card';
 // import  { CardProps as _CardProps } from '@/components/ui/creditcard';
 
 //TYPESCRIPT IS BEING A BITCH ABOUT CARDDETAILS
@@ -17,7 +18,7 @@ const Dashboard = () => {
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [balances, setBalances] = useState<{ [key: string]: BalanceData }>({});
     const [isLoading, setIsLoading] = useState(true);
-    const [cardDetails, setCardDetails] = useState<CardProps['cardData'] | null>(null);
+    const [cardDetails, setCardDetails] = useState<CardDetailsProps['cardDetailsData'] | null>(null);
 
     // Fetch the user token on component mount
     useEffect(() => {
@@ -47,7 +48,6 @@ const Dashboard = () => {
                     return;
                 }
                 setBalances(balanceData.gpa.balances);
-                setIsLoading(false);
             } catch (error: unknown) {
                 setErrorText((error as Error).message);
                 setIsAlertOpen(true);
@@ -68,7 +68,7 @@ const Dashboard = () => {
                     setIsAlertOpen(true);
                     return;
                 }
-                setCardDetails(cardData.gpa.card_details);
+                setCardDetails(cardData);
                 setIsLoading(false);
             } catch (error: unknown) {
                 setErrorText((error as Error).message);
@@ -80,6 +80,7 @@ const Dashboard = () => {
 
 
         fetchBalance();
+        fetchCardDetails();
     }, [userToken]);
 
     const handleErrorAction = () => {
@@ -108,7 +109,7 @@ const Dashboard = () => {
             {isLoading ? (
                 <Skeleton className="w-64 mr-2 h-[10rem] rounded-lg" />
             ) : (
-                <CreditCard cardDetailsData={cardDetails} />
+                <CreditCardUI cardDetailsData={cardDetails} />
             )}
         </div>
     );

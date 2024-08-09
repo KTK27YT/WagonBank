@@ -9,6 +9,10 @@ const { randomString, todayDate } = require('../utils');
 const auth = Buffer.from('${MARQETA_API_KEY}:${MARQETA_API_SECRET}').toString('base64');
 
 
+
+
+
+
 // Endpoint to get cardProducts
 router.get('/cards/cardproducts', async (req, res) => {
     try {

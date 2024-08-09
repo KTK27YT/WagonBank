@@ -30,7 +30,7 @@ export const getCardDetails = async (userToken: string) => {
 
     console.log(userData);
     try {
-        const response = await axios.post(`${BACKEND_URL}/users/card`, userData, {
+        const response = await axios.post(`${BACKEND_URL}/users/cards`, userData, {
             headers: {
                 'Content-Type': 'application/json',
             },
