@@ -4,13 +4,14 @@ import { getUserTokenSession } from '@/components/Auth/auth';
 import NavBar from '@/components/sections/nav-bar';
 import AlertDialogComponent from '@/components/ui/alert-dialog-component';
 import Balance from '@/components/ui/balance';
-import { getBalance, getCardDetails, getTransactions } from '@/components/data/user-fetch-data';
+import { getBalance, getCardDetails, getTransactions, getCardToken } from '@/components/data/user-fetch-data';
 import { BalanceData } from '@/components/ui/balance';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CreditCardUI } from '@/components/ui/credit-card';
 import type { CardDetailsProps } from '@/components/ui/credit-card';
 import { TransactionTableUI } from '@/components/ui/transactions';
 import type { Transaction } from '@/components/ui/transactions';
+import SimulateTransaction from '@/components/ui/simulate-transaction';
 // import  { CardProps as _CardProps } from '@/components/ui/creditcard';
 
 //TYPESCRIPT IS BEING A BITCH ABOUT CARDDETAILS
@@ -23,6 +24,7 @@ const Dashboard = () => {
     const [cardDetails, setCardDetails] = useState<CardDetailsProps['cardDetailsData'] | null>(null);
     const [name, setName] = useState<string | undefined>(undefined);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [cardToken, setCardToken] = useState<string | undefined>(undefined);
     // Fetch the user token on component mount
 
     const fetchAccountData = async () => {
@@ -47,6 +49,13 @@ const Dashboard = () => {
             const response = await getTransactions(userToken);
             console.log(response);
             setTransactions(response);
+
+            console.log("Fetching card token");
+            const card_token = await getCardToken(userToken);
+            console.log("Card Token: ", card_token);
+            setCardToken(card_token);
+
+
 
             setIsLoading(false);
         } catch (error) {
@@ -120,16 +129,17 @@ const Dashboard = () => {
                         <CreditCardUI cardDetailsData={cardDetails} />
                     </div>
                     <div className=''>
-                        <button className="px-8 py-2 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 text-white focus:ring-2 focus:ring-blue-400 hover:shadow-xl transition duration-200">
-                            Simulate Transaction
-                        </button>
-
+                        <SimulateTransaction setAlertText={setErrorText} setIsAlertOpen={setIsAlertOpen} card_token={cardToken ?? ""} refreshBalance={fetchAccountData} />
                     </div>
                 </div>
             )}
             {isLoading ? (
-                <div className="min-w-screen bg-black flex text-white justify-center align-center items-center p-8">
+                <div className="min-w-screen bg-black flex flex-col text-white justify-center align-center items-center p-8">
+                    <div className='w-fill h-fill'>
+                        <h1 className="text-2xl align-center text-center font-bold mb-6">Transactions</h1>
+                    </div>
                     <Skeleton className="bg-gray-900 w-screen h-64" />
+
                 </div>
             ) : (
                 <div className="min-w-screen bg-black flex text-white justify-center align-center items-center p-8">

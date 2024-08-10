@@ -206,14 +206,18 @@ router.post('/users/login', async (req, res) => {
 router.post('/users/transactions', async (req, res) => {
     console.log("Fetching transactions");
 
-    const { user_token } = req.query;
+    const { user_token } = req.body;
     try {
+        //transactions?user_token=382fa145-c96c-4f96-a217-bca5e6ce3b63
+        //transactions?user_token=${user_token}
+        console.log(user_token);
         const response = await axios.get(`${MARQETA_API_URL}/transactions?user_token=${user_token}`, {
             auth: {
                 username: MARQETA_API_KEY,
                 password: MARQETA_API_SECRET
             }
         });
+        console.log(response.data);
         console.log(response.data.data);
         console.log(user_token)
         res.status(200).json(response.data.data);

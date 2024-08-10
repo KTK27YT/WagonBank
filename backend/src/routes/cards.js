@@ -35,86 +35,6 @@ router.post('/cards/createcard', async (req, res) => {
     const card_token = null;
     const today_date = todayDate();
     try {
-        // // Create a new card product
-        // const card_name = randomString(10);
-        // try {
-        //     const response = await axios.post(`${MARQETA_API_URL}/cardproducts`, {
-        //         name: card_name,
-        //         start_date: today_date,
-        //         config: {
-        //             poi: {
-        //                 ecommerce: false,
-        //                 atm: false,
-        //                 other: {
-        //                     allow: true,
-        //                     card_presence_required: false,
-        //                     cardholder_presence_required: false
-        //                 }
-        //             },
-        //             transaction_controls: {
-        //                 accepted_countries_token: "accept_us_only",
-        //                 always_require_pin: false,
-        //                 always_require_icc: false,
-        //                 allow_gpa_auth: true,
-        //                 require_card_not_present_card_security_code: false,
-        //                 allow_mcc_group_authorization_controls: true,
-        //                 ignore_card_suspended_state: false,
-        //                 allow_network_load: false,
-        //                 allow_network_load_card_activation: false,
-        //                 allow_quasi_cash: false,
-        //                 enable_partial_auth_approval: true,
-        //                 notification_language: "fra"
-        //             },
-        //             card_personalization: {
-        //                 images: {
-        //                     card: {
-        //                         name: imageName,
-        //                         thermal_color: thermalColor
-        //                     }
-        //                 },
-        //                 payment_instrument: "PHYSICAL_MSR",
-        //                 package_id: "0",
-        //                 all_zero_card_security_code: false,
-        //                 bin_prefix: "111111",
-        //                 bulk_ship: false,
-        //                 pan_length: "16",
-        //                 fulfillment_provider: "PERFECTPLASTIC",
-        //             },
-        //             selective_auth: {
-        //                 sa_mode: 1,
-        //                 enable_regex_search_chain: false,
-        //                 dmd_location_sensitivity: 0
-        //             },
-        //             card_life_cycle: {
-        //                 activate_upon_issue: true,
-        //                 expiration_offset: {
-        //                     unit: "YEARS",
-        //                     value: 10
-        //                 },
-        //                 card_service_code: 101,
-        //                 update_expiration_upon_activation: false
-        //             },
-        //             jit_funding: {
-        //                 paymentcard_funding_source: {
-        //                     enabled: true
-        //                 }
-        //             },
-        //         }
-        //     }, {
-        //         headers: {
-        //             'Authorization': `Basic ${auth}`,
-        //             'Content-Type': 'application/json'
-        //         }
-        //     });
-
-        //     res.status(200).json(response.data);
-
-
-        // } catch (error) {
-        //     console.error('Error creating card product:', error);
-        //     res.status(500).json(error.response.data);
-        // }
-
 
 
         const response = await axios.post(`${MARQETA_API_URL}/cards`, {
@@ -145,6 +65,59 @@ router.post('/cards/createcard', async (req, res) => {
         res.status(200).json(response.data);
     } catch (error) {
         console.error('Error creating card:', error);
+        res.status(500).json(error.response.data);
+    }
+});
+
+//Endpoint to cause a Transaction
+router.post('/cards/simulatetransaction', async (req, res) => {
+    const { card_token, amount, mid } = req.body;
+    try {
+        const response = await axios.post(`${MARQETA_API_URL}/simulations/cardtransactions/authorization`, {
+            card_token: card_token,
+            amount: amount,
+            card_acceptor: {
+                mid: mid
+            },
+            network: "VISA"
+
+        }, {
+            auth: {
+                username: MARQETA_API_KEY,
+                password: MARQETA_API_SECRET
+            }
+        });
+        console.log(response.data);
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error causing transaction:', error);
+        res.status(500).json(error.response.data);
+    }
+});
+
+router.post('/cards/cardtoken', async (req, res) => {
+    const { user_token } = req.body;
+    try {
+        const name_response = await axios.get(`${MARQETA_API_URL}/users/${user_token}`, {
+            auth: {
+                username: MARQETA_API_KEY,
+                password: MARQETA_API_SECRET
+            }
+        });
+
+        const inital_response = await axios.get(`${MARQETA_API_URL}/cards/user/${user_token}`, {
+            auth: {
+                username: MARQETA_API_KEY,
+                password: MARQETA_API_SECRET
+            }
+        });
+        console.log(inital_response.data);
+        const card_token = inital_response.data.data[0].token
+
+        console.log(card_token);
+        res.json(card_token);
+    } catch (error) {
+        console.error('Error fetching card:', error);
         res.status(500).json(error.response.data);
     }
 });

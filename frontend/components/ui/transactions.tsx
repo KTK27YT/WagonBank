@@ -7,9 +7,10 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-
 } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
 import { IconFileInvoice } from '@tabler/icons-react';
+
 
 export type Transaction = {
     id: string;
@@ -18,7 +19,7 @@ export type Transaction = {
     status: string;
     created_time: string;
     identifier: string;
-    type: string;
+    type: "authorization" | "gpa.credit"; // Update the type property to be of type "authorization" | "gpa.credit"
     state: string;
     card: {
         last_four: string;
@@ -34,6 +35,10 @@ interface TransactionTableUIProps {
     errorText: string | null;
 }
 
+
+
+
+
 export const TransactionTableUI: React.FC<TransactionTableUIProps> = ({
     transactions,
     isLoading,
@@ -46,37 +51,55 @@ export const TransactionTableUI: React.FC<TransactionTableUIProps> = ({
     if (errorText) {
         return <div>Error: {errorText}</div>;
     }
+
+
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    };
+
+    const formatType = (type: string) => {
+        switch (type) {
+            case 'authorization':
+                return 'Card Purchase';
+            case 'gpa.credit':
+                return 'Top Up';
+            default:
+                return type;
+        }
+    };
+
+    const renderStatusBadge = (status: string) => {
+        const badgeStyle = status === 'COMPLETION' ? 'bg-green-500 text-white' : '';
+        return <Badge variant="outline" className={badgeStyle}>{status}</Badge>;
+    };
     return (
 
         <div>
+            <h1 className="text-2xl align-center text-center font-bold mb-6">Transactions</h1>
             {transactions && transactions.length > 0 ? (
                 <Table>
-                    <TableCaption>A list of your recent transactions.</TableCaption>
+
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
+                            <TableHead>Date</TableHead>
                             <TableHead>Type</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Amount</TableHead>
-                            <TableHead>Currency</TableHead>
-                            <TableHead>Date</TableHead>
+
                             <TableHead>Card Last Four</TableHead>
                             <TableHead>Approval Code</TableHead>
-                            <TableHead>Network</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {transactions.map((transaction) => (
                             <TableRow key={transaction.identifier}>
-                                <TableCell>{transaction.identifier}</TableCell>
-                                <TableCell>{transaction.type}</TableCell>
-                                <TableCell>{transaction.state}</TableCell>
-                                <TableCell>{transaction.amount}</TableCell>
-                                <TableCell>{transaction.currency_code}</TableCell>
-                                <TableCell>{transaction.created_time}</TableCell>
+                                <TableCell>{formatDate(transaction.created_time)}</TableCell>
+                                <TableCell>{formatType(transaction.type)}</TableCell>
+                                <TableCell>{renderStatusBadge(transaction.state)}</TableCell>
+                                <TableCell>{transaction.currency_code} {transaction.amount}</TableCell>
                                 <TableCell>{transaction.card?.last_four || 'N/A'}</TableCell>
                                 <TableCell>{transaction.approval_code || 'N/A'}</TableCell>
-                                <TableCell>{transaction.network || 'N/A'}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -89,6 +112,12 @@ export const TransactionTableUI: React.FC<TransactionTableUIProps> = ({
             )}
         </div>
     );
+
+
 };
+
+
+
+
 
 export default TransactionTableUI;

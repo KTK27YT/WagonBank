@@ -86,3 +86,48 @@ export const topUpAccount = async (userToken: string, amount: string) => {
 
 
 }
+
+export const simulate_Transaction = async (amount: string, card_token: string) => {
+
+    try {
+        console.log("Simulating transaction");
+        const userData = {
+            card_token: card_token,
+            amount: amount,
+            mid: "123456789"
+        };
+        const response = await axios.post(`${BACKEND_URL}/cards/simulatetransaction`, userData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+
+    } catch (error) {
+        console.error('Error topping up:', error);
+        const errorMessage = (error as any).response.data.error_message;
+        const errorCode = (error as any).response.data.error_code;
+        return { error: errorMessage, code: errorCode };
+    }
+
+}
+
+export const getCardToken = async (userToken: string) => {
+    try {
+        console.log("Getting card token");
+        const userData = {
+            user_token: userToken
+        };
+        const response = await axios.post(`${BACKEND_URL}/cards/cardtoken`, userData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching card token:', error);
+        const errorMessage = (error as any).response.data.error_message;
+        const errorCode = (error as any).response.data.error_code;
+        return { error: errorMessage, code: errorCode };
+    }
+}

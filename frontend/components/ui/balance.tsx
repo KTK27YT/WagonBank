@@ -80,7 +80,7 @@ const Balance: React.FC<BalanceProps> = ({ balances, user_token, refreshBalance,
                             </span>
                             <h3 className="text-lg font-semibold">{balances[currency].currency_code}</h3>
                         </div>
-                        <p className="text-xl font-bold mb-2">${balances[currency].ledger_balance.toFixed(2)}</p>
+                        <p className="text-xl font-bold mb-2">${balances[currency].available_balance.toFixed(2)}</p>
                         <p className="text-sm text-gray-400">{currency === 'USD' ? 'US Dollar' : currency}</p>
                         <Modal>
                             <ModalTrigger className="mt-4 px-4 py-2 rounded-full group/modal-btn bg-gradient-to-b from-blue-500 to-blue-600 text-white focus:ring-2 focus:ring-blue-400 hover:shadow-xl transition duration-200 flex items-center justify-center space-x-2 w-full">
