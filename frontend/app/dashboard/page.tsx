@@ -97,7 +97,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             ) : (
-                <Balance balances={balances} />
+                <Balance balances={balances} user_token={userToken} />
             )}
             {isLoading ? (
                 <div className="min-w-screen flex-col gap-10 bg-black  flex text-white flex justify-center align-center items-center p-8">
