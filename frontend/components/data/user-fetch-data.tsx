@@ -63,3 +63,26 @@ export const getTransactions = async (userToken: string) => {
         return { error: errorMessage, code: errorCode };
     }
 };
+
+export const topUpAccount = async (userToken: string, amount: string) => {
+    try {
+        console.log("Topping up");
+        const userData = {
+            user_token: userToken,
+            amount: amount,
+        };
+        const response = await axios.post(`${BACKEND_URL}/users/fundgpa`, userData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error topping up:', error);
+        const errorMessage = (error as any).response.data.error_message;
+        const errorCode = (error as any).response.data.error_code;
+        return { error: errorMessage, code: errorCode };
+    }
+
+
+}

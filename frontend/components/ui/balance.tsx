@@ -1,16 +1,21 @@
 "use client";
 import React, { useState } from 'react';
 import { US, GB, SG, KR } from 'country-flag-icons/react/3x2';
-import { IconWallet, IconLoader } from '@tabler/icons-react';
+import { IconWallet, IconLoader, IconCheck } from '@tabler/icons-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LabelInputContainer } from '@/components/ui/signup-form';
 import { Modal, ModalTrigger, ModalBody, ModalContent, ModalFooter } from '@/components/ui/animated-modal';
 import { cn } from '@/lib/utils';
+import { topUpAccount } from '@/components/data/user-fetch-data';
+
 
 interface BalanceProps {
     balances: { [key: string]: BalanceData };
     user_token?: string;
+    refreshBalance: () => Promise<void>;
+    setAlertText: (text: string) => void;
+    setIsAlertOpen: (isOpen: boolean) => void;
 }
 
 export interface BalanceData {
@@ -24,20 +29,38 @@ export interface BalanceData {
 
 
 
-const Balance: React.FC<BalanceProps> = ({ balances, user_token }) => {
+const Balance: React.FC<BalanceProps> = ({ balances, user_token, refreshBalance, setAlertText, setIsAlertOpen }) => {
 
-    const [isModalOpen, setModalOpen] = useState(false);
-
+    const [isProcessed, setisProcessed] = useState(false);
+    const [amount, setAmount] = useState<string>('');
     //When the function is running we run this
     const [isToppingUp, setisToppingUp] = useState(false);
 
     const handleTopUp = async (amount: string) => {
         setisToppingUp(true);
-        setTimeout(() => {
+        setTimeout(async () => {
             setisToppingUp(false);
             console.log('Top-Up Complete');
+
+            try {
+                const response = await topUpAccount(user_token ?? '', amount);
+                console.log(response);
+                setisProcessed(true);
+                await refreshBalance();
+            } catch (error) {
+                console.error('Error topping up:', error);
+                setisProcessed(false);
+                setAlertText('Error topping up ' + error);
+                setIsAlertOpen(true);
+            }
+
+
         }, 2000);
     };
+
+    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setAmount(e.target.value);
+    }
 
     return (
         <div className="min-w-screen bg-black text-white p-8">
@@ -62,36 +85,39 @@ const Balance: React.FC<BalanceProps> = ({ balances, user_token }) => {
                         <Modal>
                             <ModalTrigger className="mt-4 px-4 py-2 rounded-full group/modal-btn bg-gradient-to-b from-blue-500 to-blue-600 text-white focus:ring-2 focus:ring-blue-400 hover:shadow-xl transition duration-200 flex items-center justify-center space-x-2 w-full">
 
-                                <span className='group-hover/modal-btn:translate-x-40 text-center transition duration-500'>Top-Up</span>
-                                <div className="-translate-x-40 group-hover/modal-btn:translate-x-0 flex items-center justify-center absolute inset-0 transition duration-500 text-white z-20">
-                                    <IconWallet size={20} />
+                                <span onClick={() => setisProcessed(false)} className='group-hover/modal-btn:translate-x-40 text-center transition duration-500'>Top-Up</span>
+                                <div onClick={() => setisProcessed(false)} className="-translate-x-40 group-hover/modal-btn:translate-x-0 flex items-center justify-center absolute inset-0 transition duration-500 text-white z-20">
+                                    <IconWallet onClick={() => setisProcessed(false)} size={20} />
                                 </div>
                             </ModalTrigger>
 
                             <ModalBody>
                                 <ModalContent>
                                     {isToppingUp ? (
-                                        <div className="flex items-center justify-center align-center w-fill h-fill">
-                                            <IconLoader className="items-center justify-center align-center  animate-spin" size={50} />
+                                        <div className="flex items-center justify-center w-full h-full">
+                                            <IconLoader className="animate-spin" size={50} />
                                         </div>
+                                    ) : isProcessed ? (
+                                        <div className="flex items-center flex-col justify-center w-full h-full">
+                                            <IconCheck className="text-green-500" size={90} />
 
+                                            <h3>Success!</h3>
+                                        </div>
                                     ) : (
                                         <>
-                                            <h2 className="text-xl align-center justify-center text-center mb-4">Top-Up Wallet</h2>
-
+                                            <h2 className="text-xl text-center mb-4">Top-Up Wallet</h2>
                                             <LabelInputContainer className="mb-4">
-                                                <Label htmlFor="email">Amount</Label>
-                                                <Input id="amount" placeholder="100" type="email" />
+                                                <Label htmlFor="amount">Amount</Label>
+                                                <Input onChange={(e) => handleAmountChange(e)} id="amount" placeholder="100" type="text" />
                                             </LabelInputContainer>
-
                                         </>
                                     )}
 
                                 </ModalContent>
-                                {isToppingUp ? null : (
+                                {isToppingUp || isProcessed ? null : (
                                     <ModalFooter>
                                         <button
-                                            onClick={() => handleTopUp('100')}
+                                            onClick={() => handleTopUp(amount)}
                                             className="py-2 px-6 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300"
                                         >
                                             Top-Up

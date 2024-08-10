@@ -5,6 +5,7 @@ const keys = require('../keys');
 const MARQETA_API_URL = keys.MARQETA_API_URL;
 const MARQETA_API_KEY = keys.MARQETA_API_KEY;
 const MARQETA_API_SECRET = keys.MARQETA_API_SECRET;
+const PROGRAM_TOKEN = keys.PROGRAM_TOKEN;
 
 
 // All the User related routes go here
@@ -154,7 +155,8 @@ router.post('/users/balance', async (req, res) => {
 
 //Endpoint to fund Users GPA
 router.post('/users/fundgpa', async (req, res) => {
-    const { user_token, amount, program_token } = req.body;
+    const { user_token, amount } = req.body;
+    program_token = PROGRAM_TOKEN
     try {
         const response = await axios.post(`${MARQETA_API_URL}/gpaorders`, {
             user_token: user_token,

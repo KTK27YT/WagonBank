@@ -24,6 +24,40 @@ const Dashboard = () => {
     const [name, setName] = useState<string | undefined>(undefined);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     // Fetch the user token on component mount
+
+    const fetchAccountData = async () => {
+        if (!userToken) return;
+
+        try {
+            console.log('Fetching balance data');
+            const balanceData = await getBalance(userToken);
+            if (balanceData.error) {
+                throw new Error(balanceData.error);
+            }
+            setBalances(balanceData.gpa.balances);
+
+            console.log('Fetching card details');
+            const cardData = await getCardDetails(userToken, true);
+            if (cardData.error) {
+                throw new Error(cardData.error);
+            }
+            setCardDetails(cardData);
+
+            console.log('Fetching transactions');
+            const response = await getTransactions(userToken);
+            console.log(response);
+            setTransactions(response);
+
+            setIsLoading(false);
+        } catch (error) {
+            setErrorText((error as any).message || 'An error occurred');
+            setIsAlertOpen(true);
+            setIsLoading(false);
+            console.error('Error fetching data:', error);
+        }
+    };
+
+
     useEffect(() => {
         const fetchData = async () => {
             console.log("Fetching user token");
@@ -39,37 +73,7 @@ const Dashboard = () => {
     useEffect(() => {
         if (!userToken) return;
 
-        const fetchData = async () => {
-            try {
-                console.log('Fetching balance data');
-                const balanceData = await getBalance(userToken);
-                if (balanceData.error) {
-                    throw new Error(balanceData.error);
-                }
-                setBalances(balanceData.gpa.balances);
-
-                console.log('Fetching card details');
-                const cardData = await getCardDetails(userToken, true);
-                if (cardData.error) {
-                    throw new Error(cardData.error);
-                }
-                setCardDetails(cardData);
-
-                console.log('Fetching transactions');
-                const response = await getTransactions(userToken);
-                console.log(response);
-                setTransactions(response);
-
-                setIsLoading(false);
-            } catch (error) {
-                setErrorText((error as any).message || 'An error occurred');
-                setIsAlertOpen(true);
-                setIsLoading(false);
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
+        fetchAccountData();
     }, [userToken]);
 
 
@@ -97,7 +101,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             ) : (
-                <Balance balances={balances} user_token={userToken} />
+                <Balance balances={balances} user_token={userToken} refreshBalance={fetchAccountData} setAlertText={setErrorText} setIsAlertOpen={setIsAlertOpen} />
             )}
             {isLoading ? (
                 <div className="min-w-screen flex-col gap-10 bg-black  flex text-white flex justify-center align-center items-center p-8">
