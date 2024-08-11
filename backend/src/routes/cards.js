@@ -5,6 +5,7 @@ const keys = require('../keys');
 const MARQETA_API_URL = keys.MARQETA_API_URL;
 const MARQETA_API_KEY = keys.MARQETA_API_KEY;
 const MARQETA_API_SECRET = keys.MARQETA_API_SECRET;
+const CARD_PRODUCT_TOKEN = keys.CARD_PRODUCT_TOKEN;
 const { randomString, todayDate } = require('../utils');
 const auth = Buffer.from('${MARQETA_API_KEY}:${MARQETA_API_SECRET}').toString('base64');
 
@@ -39,7 +40,7 @@ router.post('/cards/createcard', async (req, res) => {
 
         const response = await axios.post(`${MARQETA_API_URL}/cards`, {
             user_token: user_token,
-            card_product_token: "136893dc-737e-409a-aeb6-1e1576787468",
+            card_product_token: CARD_PRODUCT_TOKEN,
             fulfillment: {
                 card_personalization: {
                     images: {
@@ -87,7 +88,7 @@ router.post('/cards/simulatetransaction', async (req, res) => {
                 password: MARQETA_API_SECRET
             }
         });
-        console.log(response.data);
+
         res.json(response.data);
     } catch (error) {
         console.error('Error causing transaction:', error);
@@ -111,10 +112,10 @@ router.post('/cards/cardtoken', async (req, res) => {
                 password: MARQETA_API_SECRET
             }
         });
-        console.log(inital_response.data);
+
         const card_token = inital_response.data.data[0].token
 
-        console.log(card_token);
+
         res.json(card_token);
     } catch (error) {
         console.error('Error fetching card:', error);

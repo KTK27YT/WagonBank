@@ -30,5 +30,5 @@ app.use('/api', fundingSourceRoutes);
 app.use('/api', pingRoutes);
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+
 });

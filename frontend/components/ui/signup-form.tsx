@@ -76,7 +76,7 @@ export default function SignupForm() {
 
   useEffect(() => {
     if (user_tokens !== null) {
-      console.log('Updated user_token:', user_tokens);
+
     }
   }, [user_tokens]);
 
@@ -101,7 +101,7 @@ export default function SignupForm() {
 
       // Step 1: Ping the server
       setIndexLoader(0);
-      console.log("pinging server");
+
       try {
         await pingServer();
       } catch (error) {
@@ -113,10 +113,10 @@ export default function SignupForm() {
 
       // Step 2: Create user account
       setIndexLoader(1);
-      console.log("creating user account");
+
       try {
         const response_data = await createUserAccount(formData);
-        console.log(response_data.token);
+
         setUserToken(response_data.token);
       } catch (error) {
         console.error('Error during multi-step process:', error);
@@ -138,18 +138,18 @@ export default function SignupForm() {
     if (user_tokens) {
       // Step 3: Create card
       setIndexLoader(2);
-      console.log("creating card");
-      console.log(user_tokens);
+
+
       createCard(user_tokens)
         .then(() => {
           // Step 4: Log in and redirect to dashboard
           setIndexLoader(3);
-          console.log("logging in");
+
           return loginUser();
         })
         .then(() => {
           setIndexLoader(4);
-          console.log("redirecting");
+
           setUserTokenSession(user_tokens);
           window.location.href = '/dashboard';
         })
@@ -164,12 +164,12 @@ export default function SignupForm() {
   const pingServer = async () => {
     axios.get(`${BACKEND_URL}/ping`)
       .then((response) => {
-        console.log("we pinging")
+
         return Promise.resolve(response.data.message);
       })
       .catch(function (error) {
         setErrorText('Failed to contact the server. Please try again later. More Details: ' + error);
-        console.log(error);
+
         throw error;
       });
   };
@@ -189,9 +189,9 @@ export default function SignupForm() {
           'Content-Type': 'application/json',
         },
       });
-      console.log(response.data.token);
 
-      console.log(response.data);
+
+
 
       await new Promise((resolve) => setTimeout(resolve, 5000)); // 5 second delay Its so stupid how long react hooks take to update
       return response.data;
@@ -244,8 +244,8 @@ export default function SignupForm() {
           'Content-Type': 'application/json',
         },
       });
-      console.log(response.data);
-      console.log(response.data.user.token);
+
+
       setUserToken(response.data.user.token);
       return response.data;
     } catch (error) {
@@ -259,13 +259,13 @@ export default function SignupForm() {
 
   const handleErrorAction = () => {
     // Define what happens when the user confirms the error
-    console.log("User confirmed the error");
+
     setIsAlertOpen(false); // Close the alert dialog
   };
 
   const handleErrorCancel = () => {
     // Define what happens when the user cancels the error dialog
-    console.log("User canceled the error dialog");
+
     setIsAlertOpen(false); // Close the alert dialog
   };
 

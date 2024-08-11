@@ -39,8 +39,8 @@ export default function LoginForm() {
                     'Content-Type': 'application/json',
                 },
             });
-            console.log(response.data);
-            console.log(response.data.user.token);
+
+
             setUserTokenSession(response.data.user.token);
 
 
@@ -57,18 +57,18 @@ export default function LoginForm() {
 
     const handleErrorAction = () => {
         // Define what happens when the user confirms the error
-        console.log("User confirmed the error");
+
         setIsAlertOpen(false); // Close the alert dialog
     };
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Form submitted");
-        console.log(formData);
+
+
         await loginUser().catch((error) => {
-            console.log("Error occurred while logging in");
-            console.log(error);
+
+
             setIsAlertOpen(true);
             return error;
         });

@@ -30,12 +30,12 @@ const SimulateTransaction: React.FC<SimulateTransactionProps> = ({ setAlertText,
         setisToppingUp(true);
         setTimeout(async () => {
             setisToppingUp(false);
-            console.log('Top-Up Complete');
+
 
             try {
 
                 const response = await simulate_Transaction(amount, card_token);
-                console.log(response);
+
                 setisProcessed(true);
                 refreshBalance();
             } catch (error) {

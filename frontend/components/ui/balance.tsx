@@ -40,11 +40,11 @@ const Balance: React.FC<BalanceProps> = ({ balances, user_token, refreshBalance,
         setisToppingUp(true);
         setTimeout(async () => {
             setisToppingUp(false);
-            console.log('Top-Up Complete');
+
 
             try {
                 const response = await topUpAccount(user_token ?? '', amount);
-                console.log(response);
+
                 setisProcessed(true);
                 await refreshBalance();
             } catch (error) {

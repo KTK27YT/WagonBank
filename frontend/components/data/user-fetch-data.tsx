@@ -8,7 +8,7 @@ export const getBalance = async (userToken: string) => {
         user_token: userToken,
     };
 
-    console.log(userData);
+
     try {
         const response = await axios.post(`${BACKEND_URL}/users/balance`, userData, {
             headers: {
@@ -29,7 +29,7 @@ export const getCardDetails = async (userToken: string, show_cvv: boolean) => {
         show_cvv: show_cvv,
     };
 
-    console.log(userData);
+
     try {
         const response = await axios.post(`${BACKEND_URL}/users/cards`, userData, {
             headers: {
@@ -46,7 +46,7 @@ export const getCardDetails = async (userToken: string, show_cvv: boolean) => {
 
 export const getTransactions = async (userToken: string) => {
     try {
-        console.log("Running");
+
         const userData = {
             user_token: userToken
         };
@@ -66,7 +66,7 @@ export const getTransactions = async (userToken: string) => {
 
 export const topUpAccount = async (userToken: string, amount: string) => {
     try {
-        console.log("Topping up");
+
         const userData = {
             user_token: userToken,
             amount: amount,
@@ -90,7 +90,7 @@ export const topUpAccount = async (userToken: string, amount: string) => {
 export const simulate_Transaction = async (amount: string, card_token: string) => {
 
     try {
-        console.log("Simulating transaction");
+
         const userData = {
             card_token: card_token,
             amount: amount,
@@ -114,7 +114,7 @@ export const simulate_Transaction = async (amount: string, card_token: string) =
 
 export const getCardToken = async (userToken: string) => {
     try {
-        console.log("Getting card token");
+
         const userData = {
             user_token: userToken
         };

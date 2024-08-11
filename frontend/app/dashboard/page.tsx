@@ -31,28 +31,28 @@ const Dashboard = () => {
         if (!userToken) return;
 
         try {
-            console.log('Fetching balance data');
+
             const balanceData = await getBalance(userToken);
             if (balanceData.error) {
                 throw new Error(balanceData.error);
             }
             setBalances(balanceData.gpa.balances);
 
-            console.log('Fetching card details');
+
             const cardData = await getCardDetails(userToken, true);
             if (cardData.error) {
                 throw new Error(cardData.error);
             }
             setCardDetails(cardData);
 
-            console.log('Fetching transactions');
+
             const response = await getTransactions(userToken);
-            console.log(response);
+
             setTransactions(response);
 
-            console.log("Fetching card token");
+
             const card_token = await getCardToken(userToken);
-            console.log("Card Token: ", card_token);
+
             setCardToken(card_token);
 
 
@@ -69,7 +69,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            console.log("Fetching user token");
+
             const token = await getUserTokenSession();
             setUserToken(token);
 

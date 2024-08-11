@@ -88,9 +88,9 @@ router.post('/users/cards', async (req, res) => {
                 password: MARQETA_API_SECRET
             }
         });
-        console.log(inital_response.data);
+
         const card_token = inital_response.data.data[0].token;
-        console.log("Fetching card number/details");
+
         const response = await axios.get(`${MARQETA_API_URL}/cards/${card_token}/showpan?show_cvv_number=${show_cvv}`, {
             auth: {
                 username: MARQETA_API_KEY,
@@ -109,7 +109,7 @@ router.post('/users/cards', async (req, res) => {
 
 
 
-        console.log(transformed_data);
+
         res.status(200).json(transformed_data);
 
         // res.json(response.data);
@@ -191,12 +191,12 @@ router.post('/users/login', async (req, res) => {
                 password: MARQETA_API_SECRET
             }
         });
-        console.log(MARQETA_API_URL);
+
         res.json(response.data);
 
     } catch (error) {
         console.error('Error logging in:', error);
-        console.log(MARQETA_API_URL);
+
         res.status(500).json(error.response.date);
 
     }
@@ -204,22 +204,22 @@ router.post('/users/login', async (req, res) => {
 
 // Endpoint to get transactions
 router.post('/users/transactions', async (req, res) => {
-    console.log("Fetching transactions");
+
 
     const { user_token } = req.body;
     try {
         //transactions?user_token=382fa145-c96c-4f96-a217-bca5e6ce3b63
         //transactions?user_token=${user_token}
-        console.log(user_token);
+
         const response = await axios.get(`${MARQETA_API_URL}/transactions?user_token=${user_token}`, {
             auth: {
                 username: MARQETA_API_KEY,
                 password: MARQETA_API_SECRET
             }
         });
-        console.log(response.data);
-        console.log(response.data.data);
-        console.log(user_token)
+
+
+
         res.status(200).json(response.data.data);
     } catch (error) {
         console.error('Error fetching transactions:', error);
