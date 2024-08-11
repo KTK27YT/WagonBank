@@ -1,5 +1,3 @@
-"# WagonBank" 
-
 ![](pictures/banner.png)
 
 <p align="center">
@@ -9,16 +7,18 @@
 Where has the <b>fun</b> in banking <i>gone</i>? I have missed themed banks and I have decided to create one. 
 </p>
 <p align="center">
-WagonBank is a Jojo themed bank that allows you to create an account, deposit money, withdraw money, create a credit card, transact with the card, check your balance.
+WagonBank is a Jojo-themed bank that allows you to create an account, deposit money, withdraw money, create a credit card, transact with the card, check your balance.
 </p>
 
 <h3>All jokes aside</h3>
 
-I wanted to make this to raise aware that people should do their own due dillegence when it comes to banking. WagonBank can advertise being FDIC insured, but it's our banking partners that are FDIC insured, <b>not us.</b> (<i>which we can write in the fineprint, but will you read it?</i>)
+I created this project to raise awareness about the importance of due diligence in banking. WagonBank might advertise being FDIC insured, but it's actually our banking partners who are insured, <b>not us</b>. <i>(Which we can write in the fine print, but will you read it?)</i>
+
+
 </p>
 
 ## Installation
-0. Make sure you have a Marqeta account setup [here](https://app.marqeta.com/development)
+0. Ensure you have a Marqeta account setup [here](https://app.marqeta.com/development)
 1. clone the repo
 2. run `npm install`
 3. create a `.env` file and add the following:
@@ -52,11 +52,11 @@ Here is a simple flow of how WagonBank works:
 
 Marqeta  <->  Backend (Express.js) <->  Frontend (Next.js + React) <-> User
 
-Marqeta does the real financial heavylifting
+- **Marqeta**: handles financial heavylifting
 
-The backend just acts as a middleman between Marqeta and the frontend, while also polishing up some of the data before sending it to the frontend or to Marqeta
+- **Backend**: Acts as a middleman, polishing/appending/fetching data between Marqeta and the frontend.
 
-The Frontend is what the user interacts with, it sends requests to the backend and displays the data to the user
+- **Frontend**: User interface that interacts with the backend to display data
 
 ## Contributing :sparkles:
 If you would like to contribute to this project, feel free to fork the project and make a pull request. I will review it and merge it if it fits the project.
