@@ -52,11 +52,11 @@ Here is a simple flow of how WagonBank works:
 
 Marqeta  <->  Backend (Express.js) <->  Frontend (Next.js + React) <-> User
 
-- **Marqeta**: handles financial heavylifting
+- <b>Marqeta</b>: handles financial heavylifting
 
-- **Backend**: Acts as a middleman, polishing/appending/fetching data between Marqeta and the frontend.
+- <b>Backend</b>: Acts as a middleman, polishing/appending/fetching data between Marqeta and the frontend.
 
-- **Frontend**: User interface that interacts with the backend to display data
+- <b>Frontend</b>: User interface that interacts with the backend to display data
 
 ## Contributing :sparkles:
 If you would like to contribute to this project, feel free to fork the project and make a pull request. I will review it and merge it if it fits the project.
